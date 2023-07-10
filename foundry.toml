@@ -4,5 +4,6 @@ out = "out"
 libs = ["lib"]
 
 solc = "0.8.20"
+evm-version = "shanghai"
 optimizer = true
 optimizer-runs = 1000000
