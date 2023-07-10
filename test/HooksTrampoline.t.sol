@@ -2,7 +2,8 @@
 pragma solidity ^0.8;
 
 import "forge-std/Test.sol";
-import "../src/HooksTrampoline.sol";
+
+import {HooksTrampoline} from "../src/HooksTrampoline.sol";
 
 contract HooksTrampolineTest is Test {
     address public settlement;
@@ -58,7 +59,11 @@ contract HooksTrampolineTest is Test {
             callData: abi.encodeCall(Counter.increment, ()),
             gasLimit: 50000
         });
-        hooks[1] = HooksTrampoline.Hook({target: address(reverter), callData: "", gasLimit: 50000});
+        hooks[1] = HooksTrampoline.Hook({
+            target: address(reverter),
+            callData: abi.encodeCall(Reverter.doRevert, ("boom")),
+            gasLimit: 50000
+        });
         hooks[2] = HooksTrampoline.Hook({
             target: address(counter),
             callData: abi.encodeCall(Counter.increment, ()),
@@ -69,6 +74,43 @@ contract HooksTrampolineTest is Test {
         trampoline.execute(hooks);
 
         assertEq(counter.value(), 2);
+    }
+
+    function test_ExecutesHooksInOrder() public {
+        CallInOrder order = new CallInOrder();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](10);
+        for (uint256 i = 0; i < hooks.length; i++) {
+            hooks[i] = HooksTrampoline.Hook({
+                target: address(order),
+                callData: abi.encodeCall(CallInOrder.called, (i)),
+                gasLimit: 25000
+            });
+        }
+
+        vm.prank(settlement);
+        trampoline.execute(hooks);
+
+        assertEq(order.count(), hooks.length);
+    }
+
+    function test_HandlesOutOfGas() public {
+        Hummer hummer = new Hummer();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](1);
+        hooks[0] = HooksTrampoline.Hook({
+            target: address(hummer),
+            callData: abi.encodeCall(Hummer.drive, ()),
+            gasLimit: 133700
+        });
+
+        vm.prank(settlement);
+        uint256 gas = gasleft();
+        trampoline.execute(hooks);
+        uint256 gasUsed = gas - gasleft();
+        uint256 callOverhead = (2600 + 700) * 2; // cold storage access + call cost
+
+        assertApproxEqAbs(gasUsed, hooks[0].gasLimit + callOverhead, 500);
     }
 }
 
@@ -89,7 +131,32 @@ contract Counter {
 }
 
 contract Reverter {
-    fallback() external {
-        revert();
+    function doRevert(string calldata message) external pure {
+        revert(message);
+    }
+}
+
+contract CallInOrder {
+    uint256 public count;
+
+    function called(uint256 index) external {
+        require(count++ == index, "out of order");
+    }
+}
+
+contract Hummer {
+    function drive() external {
+        // Hummers are cars that use way to much gas... Accessing the `n`th
+        // memory address past `msize()` (largest accessed memory index)
+        // requires paying to 0-out the memory from `msize()` to `n`. This costs
+        // 3-gas per 32-bytes at first and grows as `msize()` gets bigger. So
+        // accessing the last slot of `type(uint256).max` will use a huge amount
+        // of gas. The exact amount is not important for our test. Note that we
+        // `sstore()` the read value to prevent the optimizer from optimizing
+        // the `mload()` away.
+        uint256 n = type(uint256).max;
+        assembly {
+            sstore(0, mload(n))
+        }
     }
 }
