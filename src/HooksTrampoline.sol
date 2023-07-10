@@ -38,13 +38,13 @@ contract HooksTrampoline {
 
     /// @dev Executes the specified hooks. This function will revert if not
     /// called by the CoW Protocol settlement contract. This allows hooks to be
-    /// semi-permissioned and only allow calls from this contract, ensuring that
-    /// they are only executed as part of a CoW Protocol settlement.
-    /// Additionally, hooks are called with a gas limit, and are allowed to
-    /// revert. This is done in order to prevent badly configured user-specified
-    /// hooks from consuming more gas than expected (for example, if a hook were
-    /// to revert with an `INVALID` opcode) or causing an otherwise valid
-    /// settlement to revert, effectively DoS-ing other orders.
+    /// semi-permissioned, ensuring that they are only executed as part of a CoW
+    /// Protocol settlement. Additionally, hooks are called with a gas limit,
+    /// and are allowed to revert. This is done in order to prevent badly
+    /// configured user-specified hooks from consuming more gas than expected
+    /// (for example, if a hook were to revert with an `INVALID` opcode) or
+    /// causing an otherwise valid settlement to revert, effectively
+    /// DoS-ing other orders.
     ///
     /// @param hooks The hooks to execute.
     function execute(Hook[] calldata hooks) external onlySettlement {
