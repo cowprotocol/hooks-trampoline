@@ -76,3 +76,46 @@ sequenceDiagram
     Settlement->>Solver: return
     deactivate Settlement
 ```
+
+## Development
+
+### Installation
+
+This project uses [Foundry](https://book.getfoundry.sh/).
+
+Additional dependencies can be installed with:
+
+```sh
+forge install
+```
+
+### Test
+
+```sh
+forge test
+```
+
+### Deployment
+
+Copy `.env.sample` to `.env` and fill each variable with the necessary
+information.
+
+You can do a test run of the transaction with the following command:
+
+```sh
+source .env
+forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL"
+```
+
+The following command executes the deployment transaction onchain and verifies
+the contract code on the block explorer.
+
+```sh
+source .env
+forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --broadcast
+```
+
+This contract uses deterministic deployments.
+The official deployment addresses for all supported chains can be found in the
+file `networks.json`.
+Entries are manually added to that file after each deployment to a new chain.
