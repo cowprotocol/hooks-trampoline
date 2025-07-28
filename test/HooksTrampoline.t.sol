@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8;
 
-import "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 
 import {HooksTrampoline} from "../src/HooksTrampoline.sol";
 
@@ -111,6 +111,48 @@ contract HooksTrampolineTest is Test {
         uint256 callOverhead = (2600 + 700) * 2; // cold storage access + call cost
 
         assertApproxEqAbs(gasUsed, hooks[0].gasLimit + callOverhead, 500);
+    }
+
+    function test_RevertsWhenNotEnoughGas() public {
+        uint256 requiredGas = 100_000;
+        Hummer hummer = new Hummer();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](1);
+        hooks[0] = HooksTrampoline.Hook({
+            target: address(hummer),
+            callData: abi.encodeCall(Hummer.drive, ()),
+            gasLimit: requiredGas
+        });
+
+        // Limit the available gas to be less than what the hook requires
+        // Note: the test passes also for slightly higher amounts of `limitedGas` because a
+        // bit of gas is consumed before the gas check is performed.
+        uint256 limitedGas = requiredGas - 1;
+
+        vm.prank(settlement);
+        vm.expectRevert(bytes(""));
+        trampoline.execute{gas: limitedGas}(hooks);
+    }
+
+    function test_RevertsWhenNotEnoughGasForMultipleHooks() public {
+        uint256 requiredGas = 100_000;
+        Hummer hummer1 = new Hummer();
+        Hummer hummer2 = new Hummer();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](2);
+        bytes memory callData = abi.encodeCall(Hummer.drive, ());
+        hooks[0] = HooksTrampoline.Hook({target: address(hummer1), callData: callData, gasLimit: requiredGas});
+        hooks[1] = HooksTrampoline.Hook({target: address(hummer2), callData: callData, gasLimit: requiredGas});
+
+        // Limit the available gas to be less than what both hooks require
+        uint256 totalRequiredGas = requiredGas * hooks.length;
+        // Note: the test passes also for slightly higher amounts of `limitedGas` because a
+        // bit of gas is consumed before the gas check is performed.
+        uint256 limitedGas = totalRequiredGas - 1;
+
+        vm.prank(settlement);
+        vm.expectRevert(bytes(""));
+        trampoline.execute{gas: limitedGas}(hooks);
     }
 }
 

@@ -112,10 +112,20 @@ the contract code on the block explorer.
 
 ```sh
 source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --broadcast
+forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --verifier-url "$VERIFIER_URL" --broadcast
 ```
 
 This contract uses deterministic deployments.
 The official deployment addresses for all supported chains can be found in the
 file `networks.json`.
 Entries are manually added to that file after each deployment to a new chain.
+
+## Verification
+
+If you deployed the contract passing `--verify`, the contract will be verified so you can skip this step. However, if you didn't, or the verification failed, you can verify the contract manually with the following command:
+
+```sh
+source .env
+
+forge verify-contract 0x60Bf78233f48eC42eE3F101b9a05eC7878728006 src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --verifier $VERIFIER --watch
+```

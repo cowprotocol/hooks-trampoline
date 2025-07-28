@@ -45,6 +45,11 @@ contract HooksTrampoline {
     /// (for example, if a hook were to revert with an `INVALID` opcode) or
     /// causing an otherwise valid settlement to revert, effectively
     /// DoS-ing other orders.
+    /// Note: The trampoline tries to ensure that the hook is called with
+    /// exactly the gas limit specified in the hook, however in some
+    /// circumstances it may be a bit smaller than that. This is because the
+    /// algorithm to determine the gas to forward doesn't account for the gas
+    /// overhead between the gas reading and call execution.
     ///
     /// @param hooks The hooks to execute.
     function execute(Hook[] calldata hooks) external onlySettlement {
@@ -55,6 +60,12 @@ contract HooksTrampoline {
             Hook calldata hook;
             for (uint256 i; i < hooks.length; ++i) {
                 hook = hooks[i];
+                // A call forwards all but 1/64th of the available gas. The
+                // math is used as a heuristic to account for this.
+                uint256 forwardedGas = gasleft() * 63 / 64;
+                if (forwardedGas < hook.gasLimit) {
+                    revertByWastingGas();
+                }
 
                 (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);
 
@@ -63,5 +74,18 @@ contract HooksTrampoline {
                 success;
             }
         }
+    }
+
+    /// @dev Burn all gas forwarded to the call. It's used to trigger an
+    /// out-of-gas error on revert, which some node implementations (notably
+    /// Nethermind) need to properly estimate the gas limit of a transaction
+    /// involving this call. If gas isn't wasted or wasted through other means
+    /// (for example, using `assembly { invalid() }`) then an affected node will
+    /// incorrectly estimate (through `eth_estimateGas`) the gas needed by the
+    /// transaction: it will return gas used in a successful transaction instead
+    /// of the gas _limit_ used in the successful transaction. This is an issue
+    /// for transactions that take less gas when reverting than when succeeding.
+    function revertByWastingGas() private pure {
+        while (true) {}
     }
 }
