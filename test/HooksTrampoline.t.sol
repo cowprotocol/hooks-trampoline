@@ -112,6 +112,44 @@ contract HooksTrampolineTest is Test {
 
         assertApproxEqAbs(gasUsed, hooks[0].gasLimit + callOverhead, 500);
     }
+
+    function test_RevertsWhenNotEnoughGas() public {
+        uint256 requiredGas = 100_000;
+        BurnGas burner = new BurnGas();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](1);
+        hooks[0] = HooksTrampoline.Hook({
+            target: address(burner),
+            callData: abi.encodeCall(BurnGas.consumeAllGas, ()),
+            gasLimit: requiredGas
+        });
+
+        // Limit the available gas to be less than what the hook requires
+        uint256 limitedGas = requiredGas - 1; // 1 gas unit less than required
+
+        vm.prank(settlement);
+        vm.expectRevert("Not enough gas");
+        trampoline.execute{gas: limitedGas}(hooks);
+    }
+
+    function test_RevertsWhenNotEnoughGasForMultipleHooks() public {
+        uint256 requiredGas = 100_000;
+        BurnGas burner1 = new BurnGas();
+        BurnGas burner2 = new BurnGas();
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](2);
+        bytes memory callData = abi.encodeCall(BurnGas.consumeAllGas, ());
+        hooks[0] = HooksTrampoline.Hook({target: address(burner1), callData: callData, gasLimit: requiredGas});
+        hooks[1] = HooksTrampoline.Hook({target: address(burner2), callData: callData, gasLimit: requiredGas});
+
+        // Limit the available gas to be less than what both hooks require
+        uint256 totalRequiredGas = requiredGas * hooks.length;
+        uint256 limitedGas = totalRequiredGas - 1; // 1 gas units less than required
+
+        vm.prank(settlement);
+        vm.expectRevert("Not enough gas");
+        trampoline.execute{gas: limitedGas}(hooks);
+    }
 }
 
 contract GasRecorder {
@@ -157,6 +195,14 @@ contract Hummer {
         uint256 n = type(uint256).max;
         assembly {
             sstore(0, mload(n))
+        }
+    }
+}
+
+contract BurnGas {
+    function consumeAllGas() public {
+        while (true) {
+            // Do nothing, just consume gas
         }
     }
 }

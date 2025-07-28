@@ -55,6 +55,7 @@ contract HooksTrampoline {
             Hook calldata hook;
             for (uint256 i; i < hooks.length; ++i) {
                 hook = hooks[i];
+                require(gasleft() >= hook.gasLimit, "Not enough gas");
 
                 (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);
 
