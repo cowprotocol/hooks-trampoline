@@ -115,12 +115,12 @@ contract HooksTrampolineTest is Test {
 
     function test_RevertsWhenNotEnoughGas() public {
         uint256 requiredGas = 100_000;
-        BurnGas burner = new BurnGas();
+        Hummer hummer = new Hummer();
 
         HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](1);
         hooks[0] = HooksTrampoline.Hook({
-            target: address(burner),
-            callData: abi.encodeCall(BurnGas.consumeAllGas, ()),
+            target: address(hummer),
+            callData: abi.encodeCall(Hummer.drive, ()),
             gasLimit: requiredGas
         });
 
@@ -134,13 +134,13 @@ contract HooksTrampolineTest is Test {
 
     function test_RevertsWhenNotEnoughGasForMultipleHooks() public {
         uint256 requiredGas = 100_000;
-        BurnGas burner1 = new BurnGas();
-        BurnGas burner2 = new BurnGas();
+        Hummer hummer1 = new Hummer();
+        Hummer hummer2 = new Hummer();
 
         HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](2);
-        bytes memory callData = abi.encodeCall(BurnGas.consumeAllGas, ());
-        hooks[0] = HooksTrampoline.Hook({target: address(burner1), callData: callData, gasLimit: requiredGas});
-        hooks[1] = HooksTrampoline.Hook({target: address(burner2), callData: callData, gasLimit: requiredGas});
+        bytes memory callData = abi.encodeCall(Hummer.drive, ());
+        hooks[0] = HooksTrampoline.Hook({target: address(hummer1), callData: callData, gasLimit: requiredGas});
+        hooks[1] = HooksTrampoline.Hook({target: address(hummer2), callData: callData, gasLimit: requiredGas});
 
         // Limit the available gas to be less than what both hooks require
         uint256 totalRequiredGas = requiredGas * hooks.length;
@@ -195,14 +195,6 @@ contract Hummer {
         uint256 n = type(uint256).max;
         assembly {
             sstore(0, mload(n))
-        }
-    }
-}
-
-contract BurnGas {
-    function consumeAllGas() public pure {
-        while (true) {
-            // Do nothing, just consume gas
         }
     }
 }
