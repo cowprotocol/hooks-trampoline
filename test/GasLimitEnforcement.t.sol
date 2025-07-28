@@ -5,6 +5,8 @@ import "forge-std/Test.sol";
 
 import {HooksTrampoline} from "../src/HooksTrampoline.sol";
 
+import {console} from "forge-std/console.sol";
+
 contract GasLimitEnforcementTest is Test {
     address public settlement;
     HooksTrampoline public trampoline;
@@ -102,6 +104,39 @@ contract GasLimitEnforcementTest is Test {
         });
         return hooks;
     }
+
+    // This test demonstrates that Solidity calls reserve 1/64th of available gas
+    // and the called contract receives less gas than what was specified.
+    //
+    // This is important because it means we need to account for this reservation
+    // when setting gas limits for hooks, otherwise they may fail unexpectedly.
+    function test_DemonstratesOneSixtyFourthGasReservation() public {
+        GasRecorder gasRecorder = new GasRecorder();
+
+        // Use a large gas limit to make the 1/64th reservation more noticeable
+        uint256 largeGasLimit = 10_000_000; // 10M gas
+        uint256 expectedReservation = largeGasLimit / 64; // Expected gas reservation 1/64th of the gas limit
+
+        HooksTrampoline.Hook[] memory hooks = new HooksTrampoline.Hook[](1);
+        hooks[0] = HooksTrampoline.Hook({
+            target: address(gasRecorder),
+            callData: abi.encodeCall(GasRecorder.record, ()),
+            gasLimit: largeGasLimit - expectedReservation
+        });
+
+        vm.prank(settlement);
+        trampoline.execute{gas: largeGasLimit}(hooks);
+
+        uint256 actualGasReceived = gasRecorder.value();
+        uint256 expectedGasReceived = largeGasLimit - expectedReservation;
+
+        // The actual gas received should be similar to the expected
+        assertApproxEqAbs(actualGasReceived, expectedGasReceived, 6000);
+
+        emit log_named_uint("TX gas limit", largeGasLimit);
+        emit log_named_uint("Actual gas received", actualGasReceived);
+        emit log_named_uint("Expected gas received", expectedGasReceived);
+    }
 }
 
 contract GasCraver {
@@ -120,5 +155,13 @@ contract GasCraver {
 
     function reset() external {
         stateChanged = false;
+    }
+}
+
+contract GasRecorder {
+    uint256 public value;
+
+    function record() external {
+        value = gasleft();
     }
 }
