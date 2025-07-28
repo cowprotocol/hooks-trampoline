@@ -94,6 +94,7 @@ contract HooksTrampolineTest is Test {
         assertEq(order.count(), hooks.length);
     }
 
+    /// forge-config: default.isolate = false
     function test_HandlesOutOfGas() public {
         Hummer hummer = new Hummer();
 
@@ -146,7 +147,7 @@ contract HooksTrampolineTest is Test {
         // Limit the available gas to be less than what both hooks require
         uint256 totalRequiredGas = requiredGas * hooks.length;
         // Note: the test passes also for slightly higher amounts of `limitedGas` because a
-        // bit of gas is consumed before the gas check is performed. 
+        // bit of gas is consumed before the gas check is performed.
         uint256 limitedGas = totalRequiredGas;
 
         vm.prank(settlement);
