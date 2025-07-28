@@ -18,6 +18,9 @@ contract HooksTrampoline {
     /// Protocol settlement contract.
     error NotASettlement();
 
+    /// @dev Error indicating that the gas left is less than the gas limit of the hook.
+    error NotEnoughGas();
+
     /// @dev The address of the CoW Protocol settlement contract.
     address public immutable settlement;
 
@@ -55,7 +58,9 @@ contract HooksTrampoline {
             Hook calldata hook;
             for (uint256 i; i < hooks.length; ++i) {
                 hook = hooks[i];
-                require(gasleft() >= hook.gasLimit, "Not enough gas");
+                if (gasleft() < hook.gasLimit) {
+                    revert NotEnoughGas();
+                }
 
                 (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);
 

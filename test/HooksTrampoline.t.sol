@@ -128,7 +128,7 @@ contract HooksTrampolineTest is Test {
         uint256 limitedGas = requiredGas - 1; // 1 gas unit less than required
 
         vm.prank(settlement);
-        vm.expectRevert("Not enough gas");
+        vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
         trampoline.execute{gas: limitedGas}(hooks);
     }
 
@@ -147,7 +147,7 @@ contract HooksTrampolineTest is Test {
         uint256 limitedGas = totalRequiredGas - 1; // 1 gas units less than required
 
         vm.prank(settlement);
-        vm.expectRevert("Not enough gas");
+        vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
         trampoline.execute{gas: limitedGas}(hooks);
     }
 }
@@ -200,7 +200,7 @@ contract Hummer {
 }
 
 contract BurnGas {
-    function consumeAllGas() public {
+    function consumeAllGas() public pure {
         while (true) {
             // Do nothing, just consume gas
         }
