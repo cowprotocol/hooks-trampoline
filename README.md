@@ -119,3 +119,13 @@ This contract uses deterministic deployments.
 The official deployment addresses for all supported chains can be found in the
 file `networks.json`.
 Entries are manually added to that file after each deployment to a new chain.
+
+## Verification
+
+If you deployed the contract passing `--verify`, the contract will be verified so you can skip this step. However, if you didn't, or the verification failed, you can verify the contract manually with the following command:
+
+```sh
+source .env
+
+forge verify-contract <address> src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args --chain-id <chain-id>  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --watch
+```
