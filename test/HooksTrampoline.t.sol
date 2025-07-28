@@ -113,6 +113,7 @@ contract HooksTrampolineTest is Test {
         assertApproxEqAbs(gasUsed, hooks[0].gasLimit + callOverhead, 500);
     }
 
+    /// forge-config: default.isolate = true
     function test_RevertsWhenNotEnoughGas() public {
         uint256 requiredGas = 100_000;
         Hummer hummer = new Hummer();
