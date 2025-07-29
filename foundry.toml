@@ -3,10 +3,6 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
-# In isolation mode all top-level calls are executed as a separate transaction in a separate EVM
-# context, enabling more precise gas accounting and transaction state changes
-isolate = true
-
 solc = "0.8.20"
 evm-version = "shanghai"
 optimizer = true

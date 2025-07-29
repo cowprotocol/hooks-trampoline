@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8;
 
-import "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 
 import {HooksTrampoline} from "../src/HooksTrampoline.sol";
 
@@ -94,7 +94,6 @@ contract HooksTrampolineTest is Test {
         assertEq(order.count(), hooks.length);
     }
 
-    /// forge-config: default.isolate = false
     function test_HandlesOutOfGas() public {
         Hummer hummer = new Hummer();
 
@@ -114,7 +113,6 @@ contract HooksTrampolineTest is Test {
         assertApproxEqAbs(gasUsed, hooks[0].gasLimit + callOverhead, 500);
     }
 
-    /// forge-config: default.isolate = true
     function test_RevertsWhenNotEnoughGas() public {
         uint256 requiredGas = 100_000;
         Hummer hummer = new Hummer();
@@ -127,7 +125,9 @@ contract HooksTrampolineTest is Test {
         });
 
         // Limit the available gas to be less than what the hook requires
-        uint256 limitedGas = requiredGas - 1; // 1 gas unit less than required
+        // Note: the test passes also for slightly higher amounts of `limitedGas` because a
+        // bit of gas is consumed before the gas check is performed.
+        uint256 limitedGas = requiredGas - 1;
 
         vm.prank(settlement);
         vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
@@ -148,7 +148,7 @@ contract HooksTrampolineTest is Test {
         uint256 totalRequiredGas = requiredGas * hooks.length;
         // Note: the test passes also for slightly higher amounts of `limitedGas` because a
         // bit of gas is consumed before the gas check is performed.
-        uint256 limitedGas = totalRequiredGas;
+        uint256 limitedGas = totalRequiredGas - 1;
 
         vm.prank(settlement);
         vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
