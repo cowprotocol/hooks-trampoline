@@ -48,6 +48,11 @@ contract HooksTrampoline {
     /// (for example, if a hook were to revert with an `INVALID` opcode) or
     /// causing an otherwise valid settlement to revert, effectively
     /// DoS-ing other orders.
+    /// Note: The trampoline tries to ensure that the hook is called with
+    /// exactly the gas limit specified in the hook, however in some
+    /// circumstances it may be a bit smaller than that. This is because the
+    /// algorithm to determine the gas to forward doesn't account for the gas
+    /// overhead between the gas reading and call execution.
     ///
     /// @param hooks The hooks to execute.
     function execute(Hook[] calldata hooks) external onlySettlement {
@@ -58,7 +63,10 @@ contract HooksTrampoline {
             Hook calldata hook;
             for (uint256 i; i < hooks.length; ++i) {
                 hook = hooks[i];
-                if (gasleft() < hook.gasLimit) {
+                // A call forwards all but 1/64th of the available gas. The
+                // math is used as a heuristic to account for this.
+                uint256 forwardedGas = gasleft() * 63 / 64;
+                if (forwardedGas < hook.gasLimit) {
                     revert NotEnoughGas();
                 }
 
