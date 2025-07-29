@@ -63,14 +63,30 @@ contract HooksTrampoline {
             Hook calldata hook;
             for (uint256 i; i < hooks.length; ++i) {
                 hook = hooks[i];
-                // A call forwards all but 1/64th of the available gas. The
-                // math is used as a heuristic to account for this.
-                uint256 forwardedGas = gasleft() * 63 / 64;
-                if (forwardedGas < hook.gasLimit) {
-                    revert NotEnoughGas();
+                uint256 gasLimit = hook.gasLimit;
+                address target = hook.target;
+                bytes memory data = hook.callData;
+
+                bool success;
+                uint256 gasLeft;
+                assembly ("memory-safe") {
+                    success := call(gasLimit, target, 0, add(data, 0x20), mload(data), 0, 0)
+                    gasLeft := gas()
                 }
 
-                (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);
+                // We want to make sure that the previous call was forwarded
+                // exactly the gas limit. The remaining gas after the call must
+                // then be at least 1/64th of the remaining call by how the
+                // CALL opcode forwards its gas. If less gas than expected is
+                // found after the call, then it means that the call didn't
+                // receive enough gas to be fully executed.
+                // For details see the relevant OpenZeppelin code:
+                // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/c3961a45380831135b37e55bc3ed441f678a4f5e/contracts/metatx/ERC2771Forwarder.sol#L329-L370
+                if (gasLimit > 63 * gasLeft) {
+                    assembly ("memory-safe") {
+                        invalid()
+                    }
+                }
 
                 // In order to prevent custom hooks from DoS-ing settlements, we
                 // explicitly allow them to revert.
