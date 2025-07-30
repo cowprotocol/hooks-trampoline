@@ -18,9 +18,6 @@ contract HooksTrampoline {
     /// Protocol settlement contract.
     error NotASettlement();
 
-    /// @dev Error indicating that the gas left is less than the gas limit of the hook.
-    error NotEnoughGas();
-
     /// @dev The address of the CoW Protocol settlement contract.
     address public immutable settlement;
 
@@ -67,7 +64,7 @@ contract HooksTrampoline {
                 // math is used as a heuristic to account for this.
                 uint256 forwardedGas = gasleft() * 63 / 64;
                 if (forwardedGas < hook.gasLimit) {
-                    revert NotEnoughGas();
+                    revertByWastingGas();
                 }
 
                 (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);
@@ -77,5 +74,18 @@ contract HooksTrampoline {
                 success;
             }
         }
+    }
+
+    /// @dev Burn all gas forwarded to the call. It's used to trigger an
+    /// out-of-gas error on revert, which some node implementations (notably
+    /// Nethermind) need to properly estimate the gas limit of a transaction
+    /// involving this call. If gas isn't wasted or wasted through other means
+    /// (for example, using `assembly { invalid() }`) then an affected node will
+    /// incorrectly estimate (through `eth_estimateGas`) the gas needed by the
+    /// transaction: it will return gas used in a successful transaction instead
+    /// of the gas _limit_ used in the successful transaction. This is an issue
+    /// for transactions that take less gas when reverting than when succeeding.
+    function revertByWastingGas() private pure {
+        while (true) {}
     }
 }
