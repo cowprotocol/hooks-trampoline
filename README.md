@@ -115,10 +115,16 @@ source .env
 forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --verifier-url "$VERIFIER_URL" --broadcast
 ```
 
-This contract uses deterministic deployments.
-The official deployment addresses for all supported chains can be found in the
-file `networks.json`.
-Entries are manually added to that file after each deployment to a new chain.
+#### Deployment addresses
+
+The file [`networks.json`](./networks.json) lists all official deployments of the contracts in this repository by chain id.
+
+Update the file with:
+
+```sh
+bash dev/generate-networks-file.sh > networks.json
+```
+
 
 ## Verification
 
