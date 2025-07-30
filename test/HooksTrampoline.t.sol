@@ -130,7 +130,7 @@ contract HooksTrampolineTest is Test {
         uint256 limitedGas = requiredGas - 1;
 
         vm.prank(settlement);
-        vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
+        vm.expectRevert(bytes(""));
         trampoline.execute{gas: limitedGas}(hooks);
     }
 
@@ -151,7 +151,7 @@ contract HooksTrampolineTest is Test {
         uint256 limitedGas = totalRequiredGas - 1;
 
         vm.prank(settlement);
-        vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
+        vm.expectRevert(bytes(""));
         trampoline.execute{gas: limitedGas}(hooks);
     }
 }

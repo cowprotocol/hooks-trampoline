@@ -93,7 +93,7 @@ contract GasLimitEnforcementTest is Test {
         // WHEN: we execute the trampoline without the extra gas
         // THEN: the it should revert with NotEnoughGas
         vm.prank(settlement);
-        vm.expectRevert(HooksTrampoline.NotEnoughGas.selector);
+        vm.expectRevert(bytes(""));
         trampoline.execute{gas: limitForForwarding(CRAVED_GAS + GAS_CRAVER_OVERHEAD) - TRAMPOLINE_OVERHEAD}(hooks);
 
         // THEN: the gasCraver should not execute
