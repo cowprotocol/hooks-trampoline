@@ -112,7 +112,7 @@ the contract code on the block explorer.
 
 ```sh
 source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --broadcast
+forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --verify-url $VERIFIER_URL --broadcast
 ```
 
 This contract uses deterministic deployments.
@@ -127,5 +127,5 @@ If you deployed the contract passing `--verify`, the contract will be verified s
 ```sh
 source .env
 
-forge verify-contract <address> src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args --chain-id <chain-id>  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --watch
+forge verify-contract <address> src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --watch
 ```
