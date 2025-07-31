@@ -4,7 +4,11 @@ set -o errexit -o pipefail -o nounset
 
 repo_root_dir="$(git rev-parse --show-toplevel)"
 
-for deployment in "$repo_root_dir/broadcast/"*"/"*"/"*".json"; do
+for deployment in "$repo_root_dir/broadcast/"*"/"*"/run-"*".json"; do
+  # Skip run-latest.json files
+  if [[ "$(basename "$deployment")" == "run-latest.json" ]]; then
+    continue
+  fi
   # The subfolder name is the chain id
   chain_id=${deployment%/*}
   chain_id=${chain_id##*/}
