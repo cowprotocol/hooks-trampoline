@@ -3,7 +3,9 @@ cache/
 out/
 
 # Ignore broadcast logs
-broadcast/
+!/broadcast
+/broadcast/**/dry-run/
+/broadcast/**/run-latest.json
 
 # Docs
 docs/
