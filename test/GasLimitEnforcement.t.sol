@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import {Test} from "forge-std/Test.sol";
 
-import {HooksTrampoline} from "../src/HooksTrampoline.sol";
+import {HooksTrampoline} from "src/HooksTrampoline.sol";
 
 contract GasLimitEnforcementTest is Test {
     address public settlement;
