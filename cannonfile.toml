@@ -1,0 +1,13 @@
+#:schema https://raw.githubusercontent.com/usecannon/cannon/refs/heads/dev/packages/lsp/src/schema.json
+name = "cow-hooks-trampoline"
+version = "1.0.0"
+
+[var.main]
+salt = "0x0000000000000000000000000000000000000000000000000000000000000001"
+cowSettlement = "<%= AddressZero %>"
+
+[deploy.HooksTrampoline]
+artifact = "HooksTrampoline"
+create2 = true
+salt = "<%= settings.salt %>"
+args = ["<%= settings.cowSettlement %>"]
