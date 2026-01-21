@@ -1,0 +1,16 @@
+{
+  "name": "hooks-trampoline",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "record-cannon": "pnpm cannon inspect cow-hooks-trampoline:latest --chain-id 13370 --out deploy-json > cannon/deploy.json && pnpm cannon inspect cow-hooks-trampoline:latest --chain-id 13370 --out misc-json > cannon/misc.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.0",
+  "devDependencies": {
+    "@usecannon/cli": "^2.25.1"
+  }
+}
