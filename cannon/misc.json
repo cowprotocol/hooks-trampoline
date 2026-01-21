@@ -1,0 +1,76 @@
+{
+  "artifacts": {
+    "HooksTrampoline": {
+      "contractName": "HooksTrampoline",
+      "sourceName": "src/HooksTrampoline.sol",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "settlement_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "execute",
+          "inputs": [
+            {
+              "name": "hooks",
+              "type": "tuple[]",
+              "internalType": "struct HooksTrampoline.Hook[]",
+              "components": [
+                {
+                  "name": "target",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "callData",
+                  "type": "bytes",
+                  "internalType": "bytes"
+                },
+                {
+                  "name": "gasLimit",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "settlement",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "error",
+          "name": "NotASettlement",
+          "inputs": []
+        }
+      ],
+      "bytecode": "0x60a060405234801561000f575f80fd5b5060405161047d38038061047d83398101604081905261002e9161003f565b6001600160a01b031660805261006c565b5f6020828403121561004f575f80fd5b81516001600160a01b0381168114610065575f80fd5b9392505050565b6080516103f46100895f395f8181603d015260b501526103f45ff3fe608060405234801561000f575f80fd5b5060043610610034575f3560e01c80635116063014610038578063760f2a0b14610088575b5f80fd5b61005f7f000000000000000000000000000000000000000000000000000000000000000081565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b61009b610096366004610208565b61009d565b005b3373ffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000161461010c576040517f0cd41ec000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b365f5b828110156101fc5783838281811061012957610129610277565b905060200281019061013b91906102a4565b91505f60405a603f0281610151576101516102e0565b049050826040013581101561016857610168610202565b5f610176602085018561030d565b73ffffffffffffffffffffffffffffffffffffffff16604085013561019e6020870187610347565b6040516101ac9291906103af565b5f604051808303815f8787f1925050503d805f81146101e6576040519150601f19603f3d011682016040523d82523d5f602084013e6101eb565b606091505b50509050505080600101905061010f565b50505050565b5b610203565b5f8060208385031215610219575f80fd5b823567ffffffffffffffff80821115610230575f80fd5b818501915085601f830112610243575f80fd5b813581811115610251575f80fd5b8660208260051b8501011115610265575f80fd5b60209290920196919550909350505050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b5f82357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa18336030181126102d6575f80fd5b9190910192915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601260045260245ffd5b5f6020828403121561031d575f80fd5b813573ffffffffffffffffffffffffffffffffffffffff81168114610340575f80fd5b9392505050565b5f8083357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe184360301811261037a575f80fd5b83018035915067ffffffffffffffff821115610394575f80fd5b6020019150368190038213156103a8575f80fd5b9250929050565b818382375f910190815291905056fea26469706673582212203aec56971844bf1bef69242a1f8e62bf0bc7f5471df240e4d8b1ed414b52b73c64736f6c63430008140033",
+      "deployedBytecode": "0x608060405234801561000f575f80fd5b5060043610610034575f3560e01c80635116063014610038578063760f2a0b14610088575b5f80fd5b61005f7f000000000000000000000000000000000000000000000000000000000000000081565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b61009b610096366004610208565b61009d565b005b3373ffffffffffffffffffffffffffffffffffffffff7f0000000000000000000000000000000000000000000000000000000000000000161461010c576040517f0cd41ec000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b365f5b828110156101fc5783838281811061012957610129610277565b905060200281019061013b91906102a4565b91505f60405a603f0281610151576101516102e0565b049050826040013581101561016857610168610202565b5f610176602085018561030d565b73ffffffffffffffffffffffffffffffffffffffff16604085013561019e6020870187610347565b6040516101ac9291906103af565b5f604051808303815f8787f1925050503d805f81146101e6576040519150601f19603f3d011682016040523d82523d5f602084013e6101eb565b606091505b50509050505080600101905061010f565b50505050565b5b610203565b5f8060208385031215610219575f80fd5b823567ffffffffffffffff80821115610230575f80fd5b818501915085601f830112610243575f80fd5b813581811115610251575f80fd5b8660208260051b8501011115610265575f80fd5b60209290920196919550909350505050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b5f82357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa18336030181126102d6575f80fd5b9190910192915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601260045260245ffd5b5f6020828403121561031d575f80fd5b813573ffffffffffffffffffffffffffffffffffffffff81168114610340575f80fd5b9392505050565b5f8083357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe184360301811261037a575f80fd5b83018035915067ffffffffffffffff821115610394575f80fd5b6020019150368190038213156103a8575f80fd5b9250929050565b818382375f910190815291905056fea26469706673582212203aec56971844bf1bef69242a1f8e62bf0bc7f5471df240e4d8b1ed414b52b73c64736f6c63430008140033",
+      "linkReferences": {},
+      "source": {
+        "solcVersion": "0.8.20+commit.a1b79de6",
+        "input": "{\"language\":\"Solidity\",\"sources\":{\"src/HooksTrampoline.sol\":{\"content\":\"// SPDX-License-Identifier: LGPL-3.0-only\\npragma solidity ^0.8;\\n\\n/// @title CoW Protocol Hooks Trampoline\\n/// @dev A trampoline contract for calling user-specified hooks. It ensures that\\n/// user-specified calls are not executed from a privileged context, and that\\n/// reverts do not prevent settlements from executing.\\n/// @author CoW Developers\\ncontract HooksTrampoline {\\n    /// @dev A user-specified hook.\\n    struct Hook {\\n        address target;\\n        bytes callData;\\n        uint256 gasLimit;\\n    }\\n\\n    /// @dev Error indicating that the trampoline was not called from the CoW\\n    /// Protocol settlement contract.\\n    error NotASettlement();\\n\\n    /// @dev The address of the CoW Protocol settlement contract.\\n    address public immutable settlement;\\n\\n    /// @param settlement_ The address of the CoW protocol settlement contract.\\n    constructor(address settlement_) {\\n        settlement = settlement_;\\n    }\\n\\n    /// @dev Modifier that ensures that the `msg.sender` is the CoW Protocol\\n    /// settlement contract. Methods with this modifier are guaranteed to only\\n    /// be called as part of a CoW Protocol settlement.\\n    modifier onlySettlement() {\\n        if (msg.sender != settlement) {\\n            revert NotASettlement();\\n        }\\n        _;\\n    }\\n\\n    /// @dev Executes the specified hooks. This function will revert if not\\n    /// called by the CoW Protocol settlement contract. This allows hooks to be\\n    /// semi-permissioned, ensuring that they are only executed as part of a CoW\\n    /// Protocol settlement. Additionally, hooks are called with a gas limit,\\n    /// and are allowed to revert. This is done in order to prevent badly\\n    /// configured user-specified hooks from consuming more gas than expected\\n    /// (for example, if a hook were to revert with an `INVALID` opcode) or\\n    /// causing an otherwise valid settlement to revert, effectively\\n    /// DoS-ing other orders.\\n    /// Note: The trampoline tries to ensure that the hook is called with\\n    /// exactly the gas limit specified in the hook, however in some\\n    /// circumstances it may be a bit smaller than that. This is because the\\n    /// algorithm to determine the gas to forward doesn't account for the gas\\n    /// overhead between the gas reading and call execution.\\n    ///\\n    /// @param hooks The hooks to execute.\\n    function execute(Hook[] calldata hooks) external onlySettlement {\\n        // Array bounds and overflow checks are not needed here, as `i` will\\n        // never overflow and `hooks[i]` will never be out of bounds as `i` is\\n        // smaller than `hooks.length`.\\n        unchecked {\\n            Hook calldata hook;\\n            for (uint256 i; i < hooks.length; ++i) {\\n                hook = hooks[i];\\n                // A call forwards all but 1/64th of the available gas. The\\n                // math is used as a heuristic to account for this.\\n                uint256 forwardedGas = gasleft() * 63 / 64;\\n                if (forwardedGas < hook.gasLimit) {\\n                    revertByWastingGas();\\n                }\\n\\n                (bool success,) = hook.target.call{gas: hook.gasLimit}(hook.callData);\\n\\n                // In order to prevent custom hooks from DoS-ing settlements, we\\n                // explicitly allow them to revert.\\n                success;\\n            }\\n        }\\n    }\\n\\n    /// @dev Burn all gas forwarded to the call. It's used to trigger an\\n    /// out-of-gas error on revert, which some node implementations (notably\\n    /// Nethermind) need to properly estimate the gas limit of a transaction\\n    /// involving this call. If gas isn't wasted or wasted through other means\\n    /// (for example, using `assembly { invalid() }`) then an affected node will\\n    /// incorrectly estimate (through `eth_estimateGas`) the gas needed by the\\n    /// transaction: it will return gas used in a successful transaction instead\\n    /// of the gas _limit_ used in the successful transaction. This is an issue\\n    /// for transactions that take less gas when reverting than when succeeding.\\n    function revertByWastingGas() private pure {\\n        while (true) {}\\n    }\\n}\\n\"}},\"settings\":{\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"evmVersion\":\"shanghai\",\"remappings\":[\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\"],\"outputSelection\":{\"*\":{\"*\":[\"*\"]}}}}"
+      }
+    }
+  }
+}

@@ -97,41 +97,42 @@ forge test
 
 ### Deployment
 
-Copy `.env.sample` to `.env` and fill each variable with the necessary
-information.
+This project uses [Cannon](https://usecannon.com/) to generate a deployable artifact for the contracts in this repository. The deployment on live networks does not occur on this repository.
 
-You can do a test run of the transaction with the following command:
+To learn more or browse artifacts for the actual deployed contracts, see [`cow-deployments` repository](https://github.com/cowprotocol/cow-deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
+
+#### Building the Cannon Package
+
+To build a new Cannon package for Hooks Trampoline:
 
 ```sh
-source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL"
+cannon build --wipe
 ```
 
-The following command executes the deployment transaction onchain and verifies
-the contract code on the block explorer.
+This will:
+- Recompile the Solidity contracts as needed with Foundry
+- Generate a deployment manifest including the solidity input json, default settings, ABIs, as well as predicted deployment addresses.
+
+### Building with Custom Settings
+
+To build with custom create2 salt or settlement contract address, you can pass variables:
 
 ```sh
-source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --verifier-url "$VERIFIER_URL" --broadcast
+cannon build cowSettlement=0xYourOwnerAddress salt='Mattresses in Tokyo!'
 ```
 
-#### Deployment addresses
+### Publishing the Cannon Package
 
-The file [`networks.json`](./networks.json) lists all official deployments of the contracts in this repository by chain id.
+Upon release, the cannon package for this repository should be published, and the deployment artifacts should be recorded on this repository.
 
-Update the file with:
+To publish the cannon package, using a wallet that has permission to publish on behalf of the `cow-settlement` package on the Cannon Registry, execute the publish command:
 
-```sh
-bash dev/generate-networks-file.sh > networks.json
+```
+yarn cannon publish cow-settlement:<version> --chain-id 13370
 ```
 
+To record the release artifacts to this repository, run:
 
-## Verification
-
-If you deployed the contract passing `--verify`, the contract will be verified so you can skip this step. However, if you didn't, or the verification failed, you can verify the contract manually with the following command:
-
-```sh
-source .env
-
-forge verify-contract 0x60Bf78233f48eC42eE3F101b9a05eC7878728006 src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --verifier $VERIFIER --watch
+```
+yarn record-cannon
 ```
