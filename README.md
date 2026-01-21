@@ -101,12 +101,18 @@ This project uses [Cannon](https://usecannon.com/) to generate a deployable arti
 
 To learn more or browse artifacts for the actual deployed contracts, see [`cow-deployments` repository](https://github.com/cowprotocol/cow-deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
 
+Before creating the deployment package, it is necessary to install cannon through `pnpm`:
+
+```
+pnpm install
+```
+
 #### Building the Cannon Package
 
 To build a new Cannon package for Hooks Trampoline:
 
 ```sh
-cannon build --wipe
+pnpm cannon build
 ```
 
 This will:
@@ -118,7 +124,7 @@ This will:
 To build with custom create2 salt or settlement contract address, you can pass variables:
 
 ```sh
-cannon build cowSettlement=0xYourOwnerAddress salt='Mattresses in Tokyo!'
+pnpm cannon build cowSettlement=0xYourOwnerAddress salt='Mattresses in Tokyo!'
 ```
 
 ### Publishing the Cannon Package
@@ -128,11 +134,11 @@ Upon release, the cannon package for this repository should be published, and th
 To publish the cannon package, using a wallet that has permission to publish on behalf of the `cow-settlement` package on the Cannon Registry, execute the publish command:
 
 ```
-yarn cannon publish cow-settlement:<version> --chain-id 13370
+pnpm cannon publish cow-settlement:<version> --chain-id 13370
 ```
 
 To record the release artifacts to this repository, run:
 
 ```
-yarn record-cannon
+pnpm record-cannon
 ```
