@@ -99,7 +99,9 @@ forge test
 
 This project uses [Cannon](https://usecannon.com/) to generate a deployable artifact for the contracts in this repository. The deployment on live networks does not occur on this repository.
 
-To learn more or browse artifacts for the actual deployed contracts, see [`cow-deployments` repository](https://github.com/cowprotocol/cow-deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
+To learn more or browse artifacts for the actual deployed contracts, see [`cowprotocol/deployments` repository](https://github.com/cowprotocol/deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
+
+As a backup, the artifacts for this repository's contracts are committed to `cannon/` through a generated command.
 
 Before creating the deployment package, it is necessary to install cannon through `pnpm`:
 
