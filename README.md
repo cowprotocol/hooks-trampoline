@@ -95,52 +95,51 @@ forge install
 forge test
 ```
 
-### Deployment
+## Building a Cannon Package for Deployment
 
 This project uses [Cannon](https://usecannon.com/) to generate a deployable artifact for the contracts in this repository. The deployment on live networks does not occur on this repository.
 
 To learn more or browse artifacts for the actual deployed contracts, see [`cowprotocol/deployments` repository](https://github.com/cowprotocol/deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
 
-As a backup, the artifacts for this repository's contracts are committed to `cannon/` through a generated command.
+### Building the Cannon Package
 
-Before creating the deployment package, it is necessary to install cannon through `pnpm`:
-
-```
-pnpm install
-```
-
-#### Building the Cannon Package
-
-To build a new Cannon package for Hooks Trampoline:
+To build a new Cannon package:
 
 ```sh
-pnpm cannon build
+yarn build:cannon
 ```
 
 This will:
-- Recompile the Solidity contracts as needed with Foundry
+- Recompile the Solidity contracts as needed
 - Generate a deployment manifest including the solidity input json, default settings, ABIs, as well as predicted deployment addresses.
-
-### Building with Custom Settings
-
-To build with custom create2 salt or settlement contract address, you can pass variables:
-
-```sh
-pnpm cannon build cowSettlement=0xYourOwnerAddress salt='Mattresses in Tokyo!'
-```
 
 ### Publishing the Cannon Package
 
-Upon release, the cannon package for this repository should be published, and the deployment artifacts should be recorded on this repository.
+When the contracts should be released to staging or production:
 
-To publish the cannon package, using a wallet that has permission to publish on behalf of the `cow-settlement` package on the Cannon Registry, execute the publish command:
+1. Double check that the `version` field in `cannonfile.toml` is as expected, and modify as necessary.
+
+2. Follow instructions in [Building the Cannon Package](#Building the Cannon Package) above to ensure the artifacts are up to date.
+
+3. Publish the cannon package using an EOA that has permission on the `cow-settlement` package. You will also need 0.0025 ETH + gas on Optimism Mainnet.
+
+To publish, execute the publish command:
 
 ```
-pnpm cannon publish cow-settlement:<version> --chain-id 13370
+yarn cannon:publish
 ```
 
-To record the release artifacts to this repository, run:
+Where `<version>` is the version recorded in the `cannonfile.toml` from earlier, and `13370` is the anvil network created by cannon and used to prepare the packages before publishing. 
+
+You will be prompted for the publishing network (select "Optimism") and for the private key of the account to use to publish.
+
+4. Ensure that you have changes for git in your `cannon/` directory. If not, you may need to run the `cannon:record` command:
 
 ```
-pnpm record-cannon
+yarn cannon:record 
 ```
+
+5. Bump the patch version of the package as specified in `cannonfile.toml`. This version should be bumped *after* the publish is complete.
+
+Commit all the changes to a PR. A CI job will ensure consistency between the published package and repository files.
+

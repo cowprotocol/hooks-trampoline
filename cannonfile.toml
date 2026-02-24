@@ -10,28 +10,17 @@ version = "1.0.0"
 [var.pkg]
 cowSettlementPkg = "cow-settlement:2.0.2"
 
-# HooksTrampoline depends on the settlement contract address, so we can import the official package 
-# in order to use it as a testing fixture and to retrieve the official deployment address.
-# his also serves as a sort of sanity check that the cow settlement package has been properly deployed.
+# Pull in cow-settlement package to get the current settlement address
 [pull.cow]
 source = "<%= settings.cowSettlementPkg %>"
 
-# These are various settings that we may want to override. The salt is the default for the original deployment
-# Of this contract, and cow settlement address is interpolated from the above imported cow package.
 [var.main]
 salt = "0x0000000000000000000000000000000000000000000000000000000000000001"
 cowSettlement = "<%= cow.Settlement.address %>"
 
-# This is where we actually deploy the contract.
 [deploy.HooksTrampoline]
-# The name of the contract in Solidity
 artifact = "HooksTrampoline"
-# Enables deployment using arachnid create2 proxy
 create2 = true
-# In the case that the contract already exists at the requested address, continue without error, since anyone
-# can deploy it and in this case its not harmful.
 ifExists = "continue"
-# Set the salt for the create2 contract deployment
 salt = "<%= settings.salt %>"
-# Set the constructor argument (the CoW Settlement address)
 args = ["<%= settings.cowSettlement %>"]
