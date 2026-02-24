@@ -95,43 +95,51 @@ forge install
 forge test
 ```
 
-### Deployment
+## Building a Cannon Package for Deployment
 
-Copy `.env.sample` to `.env` and fill each variable with the necessary
-information.
+This project uses [Cannon](https://usecannon.com/) to generate a deployable artifact for the contracts in this repository. The deployment on live networks does not occur on this repository.
 
-You can do a test run of the transaction with the following command:
+To learn more or browse artifacts for the actual deployed contracts, see [`cowprotocol/deployments` repository](https://github.com/cowprotocol/deployments) or [`cow-omnibus` on Cannon Explorer](https://usecannon.com/packages/cow-omnibus).
 
-```sh
-source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL"
-```
+### Building the Cannon Package
 
-The following command executes the deployment transaction onchain and verifies
-the contract code on the block explorer.
+To build a new Cannon package:
 
 ```sh
-source .env
-forge script script/DeployHooksTrampoline.s.sol -vvvv --rpc-url "$ETH_RPC_URL" --verify --verifier-url "$VERIFIER_URL" --broadcast
+yarn build:cannon
 ```
 
-#### Deployment addresses
+This will:
+- Recompile the Solidity contracts as needed
+- Generate a deployment manifest including the solidity input json, default settings, ABIs, as well as predicted deployment addresses.
 
-The file [`networks.json`](./networks.json) lists all official deployments of the contracts in this repository by chain id.
+### Publishing the Cannon Package
 
-Update the file with:
+When the contracts should be released to staging or production:
 
-```sh
-bash dev/generate-networks-file.sh > networks.json
+1. Double check that the `version` field in `cannonfile.toml` is as expected, and modify as necessary.
+
+2. Follow instructions in [Building the Cannon Package](#Building the Cannon Package) above to ensure the artifacts are up to date.
+
+3. Publish the cannon package using an EOA that has permission on the `cow-settlement` package. You will also need 0.0025 ETH + gas on Optimism Mainnet.
+
+To publish, execute the publish command:
+
+```
+yarn cannon:publish
 ```
 
+Where `<version>` is the version recorded in the `cannonfile.toml` from earlier, and `13370` is the anvil network created by cannon and used to prepare the packages before publishing. 
 
-## Verification
+You will be prompted for the publishing network (select "Optimism") and for the private key of the account to use to publish.
 
-If you deployed the contract passing `--verify`, the contract will be verified so you can skip this step. However, if you didn't, or the verification failed, you can verify the contract manually with the following command:
+4. Ensure that you have changes for git in your `cannon/` directory. If not, you may need to run the `cannon:record` command:
 
-```sh
-source .env
-
-forge verify-contract 0x60Bf78233f48eC42eE3F101b9a05eC7878728006 src/HooksTrampoline.sol:HooksTrampoline --guess-constructor-args  --etherscan-api-key $ETHERSCAN_API_KEY --verifier-url $VERIFIER_URL --verifier $VERIFIER --watch
 ```
+yarn cannon:record 
+```
+
+5. Bump the patch version of the package as specified in `cannonfile.toml`. This version should be bumped *after* the publish is complete.
+
+Commit all the changes to a PR. A CI job will ensure consistency between the published package and repository files.
+

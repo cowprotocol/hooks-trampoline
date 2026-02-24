@@ -1,0 +1,26 @@
+#:schema https://raw.githubusercontent.com/usecannon/cannon/refs/heads/dev/packages/lsp/src/schema.json
+
+# This is a Cannon package configuration. Learn more about the syntax and options here:
+# https://usecannon.com/learn/cannonfile
+
+name = "cow-hooks-trampoline"
+version = "1.0.0"
+
+# Set the package reference for the settlement contract. [var.pkg]
+[var.pkg]
+cowSettlementPkg = "cow-settlement:2.0.2"
+
+# Pull in cow-settlement package to get the current settlement address
+[pull.cow]
+source = "<%= settings.cowSettlementPkg %>"
+
+[var.main]
+salt = "0x0000000000000000000000000000000000000000000000000000000000000001"
+cowSettlement = "<%= cow.Settlement.address %>"
+
+[deploy.HooksTrampoline]
+artifact = "HooksTrampoline"
+create2 = true
+ifExists = "continue"
+salt = "<%= settings.salt %>"
+args = ["<%= settings.cowSettlement %>"]
