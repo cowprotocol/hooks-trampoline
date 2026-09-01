@@ -44,5 +44,11 @@
       semanticCommitScope: "dev-dependencies",
       commitMessageTopic: "dev dependencies",
     },
+    // Major upgrades need an explicit compatibility and supply-chain review.
+    {
+      matchManagers: ["npm"],
+      matchUpdateTypes: ["major"],
+      enabled: false,
+    },
   ],
 }
