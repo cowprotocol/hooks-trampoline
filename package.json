@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@12.1.0",
   "devDependencies": {
     "@usecannon/cli": "^2.26.0-alpha.0"
   }
